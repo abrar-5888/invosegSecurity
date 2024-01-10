@@ -20,18 +20,10 @@ class _appSecurityState extends State<appSecurity> {
   XFile? file;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController purposeController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
   TextEditingController vehicleNoController = TextEditingController();
 
   int _currentStep = 0;
   var selectedUser;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // fetchUsers("");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +42,10 @@ class _appSecurityState extends State<appSecurity> {
         title: const Text(
           "Security",
           style: TextStyle(
-              color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
+            color: Colors.black,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -69,7 +64,6 @@ class _appSecurityState extends State<appSecurity> {
               setState(() {
                 firstNameController.clear();
                 purposeController.clear();
-                addressController.clear();
                 vehicleNoController.clear();
                 _currentStep = 3;
               });
@@ -91,7 +85,8 @@ class _appSecurityState extends State<appSecurity> {
               children: <Widget>[
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(15, 39, 127, 1)),
+                    backgroundColor: const Color.fromRGBO(15, 39, 127, 1),
+                  ),
                   onPressed: controls.onStepContinue,
                   child: const Text('Continue'),
                 ),
@@ -174,40 +169,32 @@ class _appSecurityState extends State<appSecurity> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: addressController,
-                    onChanged: (value) async {
-                      SharedPreferences set =
-                          await SharedPreferences.getInstance();
-                      set.setString('addressTOgo', value);
-                    },
-                    decoration: const InputDecoration(labelText: 'Address'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the address';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color.fromRGBO(15, 39, 127, 1)),
-                        onPressed: () async {
-                          // EasyLoading.show(
-                          //   status: "Loading please wait",
-                          // );
-                          await selectAndUploadImage();
-                          EasyLoading.showSuccess("Image Uploaded");
-                        },
-                        child: const Text(
-                          "Upload Picture",
-                        )),
+                                const Color.fromRGBO(15, 39, 127, 1),
+                          ),
+                          onPressed: () async {
+                            await selectAndUploadImage();
+                          },
+                          child: const Text(
+                            "Upload Picture",
+                          ),
+                        ),
+                        if (file != null)
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "File Uploaded",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          )
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -268,11 +255,6 @@ class _appSecurityState extends State<appSecurity> {
                             child: Text(
                                 'Vehicle No :             ${vehicleNoController.text}'),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                                'Address :         ${addressController.text}'),
-                          ),
                         ],
                       ),
                     ),
@@ -297,44 +279,49 @@ class _appSecurityState extends State<appSecurity> {
       case 0:
         return _validateStep0();
       case 1:
-      // return _validateStep1();
-      case 2:
         return _validateStep1();
-      case 3:
-      // return _validateStep2();
+      case 2:
+        return _validateStep2();
       default:
         return false;
     }
   }
 
   bool _validateStep0() {
-    if (firstNameController.text.isEmpty ||
-        purposeController.text.isEmpty ||
-        vehicleNoController.text.isEmpty ||
-        addressController.text.isEmpty) {
-      // Display an error message or handle the validation failure
+    if (firstNameController.text.isEmpty) {
+      _showValidationError("Please enter the first name");
+      return false;
+    } else if (purposeController.text.isEmpty) {
+      _showValidationError("Please enter the purpose");
+      return false;
+    } else if (vehicleNoController.text.isEmpty) {
+      _showValidationError("Please enter the vehicle number");
       return false;
     }
     return true;
   }
 
-  // bool _validateStep1() {
-  //   // Add your validation logic for step 1
-  //   // For example, you can check if a picture is uploaded
-  //   return file != null;
-  // }
-
   bool _validateStep1() {
-    // Add your validation logic for step 2
-    // For example, you can check if user details are confirmed
-    return true; // Placeholder, replace with actual validation
+    return file != null;
   }
 
-  bool _validateStep3() {
-    // Add your validation logic for step 3
-    // For example, you can check if a user is selected
+  bool _validateStep2() {
     return selectedUser != null;
   }
+
+  void _showValidationError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {},
+        ),
+      ),
+    );
+  }
+
+  String fileName = "";
 
   Future<void> selectAndUploadImage() async {
     String uniqueName = DateTime.now().millisecondsSinceEpoch.toString();
@@ -347,15 +334,18 @@ class _appSecurityState extends State<appSecurity> {
       return;
     }
 
-    XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
+    XFile? selectedFile = await imagePicker.pickImage(source: source);
 
-    print('path == ${file?.path}');
+    print('path == ${selectedFile?.path}');
 
-    if (file == null) {
-      print("File is empty");
+    if (selectedFile == null) {
+      EasyLoading.showError("Image not selected");
+      Future.delayed(const Duration(seconds: 1), () {
+        EasyLoading.dismiss();
+      });
     } else {
       try {
-        File imageFile = File(file.path);
+        File imageFile = File(selectedFile.path);
 
         // Ensure the file has a proper extension
         String fileExtension =
@@ -369,7 +359,11 @@ class _appSecurityState extends State<appSecurity> {
 
         await fileReference.putFile(imageFile);
         downloadUrl = await fileReference.getDownloadURL();
-
+        setState(() {
+          fileName = selectedFile.name;
+          file = selectedFile;
+        });
+        print(file!.name);
         SharedPreferences set = await SharedPreferences.getInstance();
         set.setString('Image', downloadUrl);
 
@@ -380,16 +374,4 @@ class _appSecurityState extends State<appSecurity> {
       }
     }
   }
-
-  // Fetch users from Firebase based on the search query
-}
-
-class UserDetails {
-  final String name;
-  final String phone;
-
-  UserDetails({
-    required this.name,
-    required this.phone,
-  });
 }

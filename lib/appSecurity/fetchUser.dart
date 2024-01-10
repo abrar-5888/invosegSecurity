@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
-import 'package:invoseg_security/appSecurity/mainFile.dart';
+import 'package:invoseg_security/tab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class fetchUsers extends StatefulWidget {
@@ -111,6 +111,9 @@ class _fetchUsersState extends State<fetchUsers> {
         padding: const EdgeInsets.all(8.0),
         child: TextFormField(
           controller: searchUserController,
+          onChanged: (value) {
+            fetchUsers(searchUserController.text);
+          },
           decoration: InputDecoration(
             labelText: 'Search User by Name or Phone',
             suffixIcon: IconButton(
@@ -210,7 +213,7 @@ class _fetchUsersState extends State<fetchUsers> {
                         ),
                         ElevatedButton(
                           onPressed: () async {
-                             DateTime dateTime = DateTime.now();
+                            DateTime dateTime = DateTime.now();
                             String formattedDate =
                                 DateFormat('dd/MM/yyyy').format(dateTime);
                             print(formattedDate); // Output: 03/12/2023
@@ -231,8 +234,8 @@ class _fetchUsersState extends State<fetchUsers> {
                                   .collection('entryUser')
                                   .add({
                                 'Mainid': id,
-                                'date':formattedDate,
-                                'time':formattedTime,
+                                'date': formattedDate,
+                                'time': formattedTime,
                                 'firstName': fname,
                                 'vehicleNo': vhicleNo,
                                 'purpose': lname,
@@ -245,10 +248,12 @@ class _fetchUsersState extends State<fetchUsers> {
                                     .collection('entryUser')
                                     .doc(documentReference.id)
                                     .update({'id': documentReference.id});
-                               
+
                                 await FirebaseFirestore.instance
                                     .collection('notifications')
                                     .add({
+                                  'pressedTime': DateTime.now(),
+                                  'uid': id,
                                   'id': documentReference.id,
                                   'description':
                                       "please confirm identity of your friend",
@@ -260,13 +265,13 @@ class _fetchUsersState extends State<fetchUsers> {
                                       'https://blog.udemy.com/wp-content/uploads/2014/05/bigstock-test-icon-63758263.jpg'
                                 });
                               });
-                              EasyLoading.showSuccess("Message has been sent");
+                              EasyLoading.showSuccess("Request has been sent");
                               Future.delayed(const Duration(seconds: 1), () {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const appSecurity(),
-                                    ));
+                                        builder: (context) =>
+                                            TabsScreen(index: 0)));
                                 EasyLoading.dismiss();
                               });
                             } catch (e) {

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:invoseg_security/appSecurity/mainFile.dart';
 
 class Home extends StatefulWidget {
@@ -362,36 +361,14 @@ class _HomeState extends State<Home> {
               ),
               child: ListView.builder(
                 itemBuilder: (context, index) {
-                  DateTime dateTime = DateTime.now();
-                  String formattedDate =
-                      DateFormat('dd/MM/yyyy').format(dateTime);
                   return Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 14.0, left: 20),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            groupedUsers.keys
-                                .toList()[0], // Use the actual date value
-                            style:
-                                groupedUsers.keys.toList()[0] == formattedDate
-                                    ? const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25,
-                                      )
-                                    : const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 20,
-                                      ),
-                          ),
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
+                              subtitle: Text(users[index]['date']),
                               title: Text(
                                   "${users[index]['name']} has been Approved"),
                               leading: Container(

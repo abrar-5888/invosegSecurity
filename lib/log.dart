@@ -44,8 +44,8 @@ class _LogState extends State<Log> {
           bottom: const TabBar(
             labelColor: Colors.black,
             tabs: [
-              Tab(text: "Completed"),
               Tab(text: "Pending"),
+              Tab(text: "Approved"),
               Tab(text: "Rejected"),
             ],
           ),
@@ -54,12 +54,12 @@ class _LogState extends State<Log> {
           children: [
             // Completed Tab Content
             Center(
-              child: CompletedLogs(),
+              child: PendingLogs(),
             ),
 
             // Pending Tab Content
             Center(
-              child: PendingLogs(),
+              child: CompletedLogs(),
             ),
             Center(
               child: RejectedLogs(),

@@ -58,13 +58,20 @@ class _SplashScreenState extends State<SplashScreen> {
                   fontWeight: FontWeight.bold),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-                height: 100,
-                width: 100,
-                child: Image.asset("assets/images/TransparentLogo.png")),
-          ),
+          SizedBox(
+              height: 100,
+              width: 100,
+              child: Image.asset("assets/images/TransparentLogo.png")),
+          const Text(
+            "INVOSEG",
+            style: TextStyle(shadows: [
+              Shadow(
+                offset: Offset(1.0, 1.0),
+                blurRadius: 1.0,
+                color: Colors.black,
+              ),
+            ], fontSize: 25, fontWeight: FontWeight.bold, color: Colors.black),
+          )
         ],
       ),
     );
