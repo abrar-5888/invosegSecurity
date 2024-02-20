@@ -281,7 +281,10 @@ class _fetchUsersState extends State<fetchUsers> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromRGBO(15, 39, 127, 1)),
-                          child: const Text("Send"),
+                          child: const Text(
+                            "Send",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         )
                       ],
                     ),

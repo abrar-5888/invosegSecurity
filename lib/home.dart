@@ -135,7 +135,7 @@ class _HomeState extends State<Home> {
                 ));
           },
           backgroundColor: const Color.fromRGBO(15, 39, 127, 1),
-          child: const Icon(Icons.add)),
+          child: const Icon(Icons.add, color: Colors.white)),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,

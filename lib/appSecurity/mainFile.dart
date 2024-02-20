@@ -88,11 +88,13 @@ class _appSecurityState extends State<appSecurity> {
                     backgroundColor: const Color.fromRGBO(15, 39, 127, 1),
                   ),
                   onPressed: controls.onStepContinue,
-                  child: const Text('Continue'),
+                  child: const Text('Continue',
+                      style: TextStyle(color: Colors.white)),
                 ),
                 TextButton(
                   onPressed: controls.onStepCancel,
-                  child: const Text('Cancel'),
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -181,9 +183,8 @@ class _appSecurityState extends State<appSecurity> {
                           onPressed: () async {
                             await selectAndUploadImage();
                           },
-                          child: const Text(
-                            "Upload Picture",
-                          ),
+                          child: const Text("Upload Picture",
+                              style: TextStyle(color: Colors.white)),
                         ),
                         if (file != null)
                           const Padding(
@@ -328,11 +329,6 @@ class _appSecurityState extends State<appSecurity> {
     ImagePicker imagePicker = ImagePicker();
 
     const source = ImageSource.camera;
-
-    if (source == null) {
-      print("No image source selected");
-      return;
-    }
 
     XFile? selectedFile = await imagePicker.pickImage(source: source);
 
